@@ -4,10 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kartu Tanya–Jawab + Mini Player (anime.js stagger, fixed card)</title>
+  <link rel="icon" type="image/png" href="heart.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="heart.png" sizes="16x16" />
+  <title>Hope you doing well sunny</title>
 
-  <!-- Fonts as requested -->
   <style>
+    html,
+    body {
+      height: 100%;
+    }
+
     @font-face {
       font-family: 'PP Neue Corp';
       src: url('https://cdn.prod.website-files.com/6717aac16c9ea22eeef1e79e/6717de2d56e40b921572d2d9_PPNeueCorp-TightUltrabold.woff2') format('woff2');
@@ -32,28 +38,35 @@
       --radius: 14px;
       --bgsize: .38rem;
       --card-h: 380px;
-      /* fixed height so the card doesn't reflow */
     }
 
     * {
       box-sizing: border-box;
     }
 
+
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+
       display: grid;
-      place-items: center;
-      gap: 36px;
+      grid-template-rows: auto 1fr auto;
+      justify-items: center;
+
+      gap: 20px;
+
+      --edge-pad: clamp(18px, 6vw, 32px);
+      padding: clamp(10px, 2.6vh, 24px) var(--edge-pad);
+
       background: #fff7fb;
       font-family: 'PP Neue Montreal', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--text);
-      padding: 32px 20px;
     }
 
     .box {
       position: relative;
-      width: min(96vw, 980px);
+      width: min(100%, 980px);
       height: var(--card-h);
       background: #fff;
       padding: 44px 36px 64px;
@@ -63,9 +76,26 @@
       overflow: visible;
       display: flex;
       align-items: center;
-      /* center secara vertikal */
       justify-content: center;
-      /* center secara horizontal */
+    }
+
+    @media (max-width: 600px) {
+      body {
+        --edge-pad: clamp(24px, 8vw, 40px);
+      }
+
+      /* lebih lega di hp */
+      :root {
+        --card-h: 340px;
+      }
+
+      .question {
+        font-size: 1.25rem;
+      }
+
+      ul.options li {
+        min-width: 160px;
+      }
     }
 
     .box::after {
@@ -103,23 +133,47 @@
       text-align: center;
     }
 
-    /* Keep content layout nice inside fixed card */
     #content {
       position: relative;
       overflow: hidden;
-      /* penting: scope animasi di area card */
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* center horizontal */
       justify-content: center;
-      /* center vertikal */
       gap: 18px;
       width: 100%;
       max-width: 860px;
-      /* biar baris opsi ga kelebaran */
-      padding-bottom: 0;
-      /* opsional: tak perlu lagi */
+      border-radius: calc(var(--radius) - 2px);
+      padding-top: clamp(22px, 5vh, 32px);
+    }
+
+    @media (max-width: 480px) {
+
+      #content {
+        padding-top: 10px;
+        gap: 10px;
+      }
+
+      .question {
+        font-size: clamp(18px, 4.6vw, 22px);
+        line-height: 1.32;
+        margin: 4px 0 10px;
+        text-align: center;
+      }
+
+      ul.options {
+        padding: 8px 6px;
+        gap: 10px 12px;
+      }
+
+      button.option {
+        padding: 10px 14px;
+      }
+
+      :root {
+        --card-h: 330px;
+      }
+
     }
 
     ul.options {
@@ -255,6 +309,12 @@
       }
     }
 
+    #butterfly-hero {
+      position: relative;
+      z-index: 5;
+      /* di atas card */
+    }
+
     .butterfly {
       background: none;
       color: hotpink;
@@ -314,8 +374,10 @@
       --beta-tangent-angle: atan(var(--tan));
 
       position: fixed;
-      top: 100px;
+      top: clamp(12px, 5vh, 56px);
+      /* <= tadinya 100px, sekarang lebih ke atas */
       left: 0;
+      z-index: 6;
       width: calc(var(--CONTAINER-WIDTH) * var(--UNIT));
       animation: progress 3s linear infinite;
     }
@@ -324,13 +386,23 @@
       --shape-width: 50px;
       --shape-height: 10px;
       position: absolute;
-      z-index: 1;
+      z-index: 7;
       top: calc(-0.5 * var(--shape-height));
       left: calc(-0.5 * var(--shape-width));
       width: var(--shape-width);
       height: var(--shape-height);
       translate: var(--x-with-unit) var(--y-with-unit);
       rotate: var(--beta-tangent-angle);
+    }
+
+    @media (max-width: 600px) {
+      .shape-container {
+        top: clamp(8px, 4vh, 40px);
+      }
+
+      .shape {
+        --shape-width: 44px;
+      }
     }
 
     .restart-wrap {
@@ -401,6 +473,23 @@
         animation: none;
       }
     }
+
+    #butterfly-hero {
+      align-self: start;
+    }
+
+    /* atas */
+    #card {
+      place-self: center;
+    }
+
+    /* tengah */
+    #player-card,
+    .site-footer {
+      align-self: end;
+    }
+
+    /* bawah (kalau ada footer) */
   </style>
 </head>
 
@@ -441,7 +530,6 @@
   </section>
 
 
-  <!-- Kartu utama -->
   <section class="box" id="card">
     <div id="content">
       <p class="question">Kamu tau ga si cara mudah ingat warna warna pelangi?</p>
@@ -453,7 +541,6 @@
     </div>
   </section>
 
-  <!-- Mini Music Player -->
   <section id="player-card" aria-label="Pemutar musik">
     <p id="player-title">lowkey — NIKI</p>
     <div class="controls">
@@ -465,10 +552,11 @@
     </audio>
   </section>
 
-  <!-- First Layer -->
   <div id="intro-overlay" tabindex="0">
     <div class="intro-content">
       <div class="intro-title">Hi Sunny WKKWKWWK</div>
+      <div class="intro-title">Good Morning/Day yaa</div>
+
       <div class="intro-sub">Click Anywhere</div>
     </div>
   </div>
